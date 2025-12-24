@@ -23,10 +23,10 @@ else
   EXE=
 endif
 
-HOST_CC=gcc
-CC=$(CROSS_PREFIX)gcc
-CFLAGS=-Wall -g -MMD -Werror -D_GNU_SOURCE -fno-math-errno -fno-trapping-math
-HOST_CFLAGS=-Wall -g -MMD -Werror -D_GNU_SOURCE -fno-math-errno -fno-trapping-math
+HOST_CC=clang
+CC=$(CROSS_PREFIX)clang
+CFLAGS=-Wall -g -MMD -Werror -Wno-unused-result -Wno-absolute-value -D_GNU_SOURCE -fno-math-errno -fno-trapping-math
+HOST_CFLAGS=-Wall -g -MMD -Werror -Wno-unused-result -Wno-absolute-value -D_GNU_SOURCE -fno-math-errno -fno-trapping-math
 ifdef CONFIG_ARM32
 CFLAGS+=-mthumb
 endif

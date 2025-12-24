@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make:*)",
+      "Bash(apt-get update:*)",
+      "Bash(apt-get install:*)"
+    ]
+  }
+}

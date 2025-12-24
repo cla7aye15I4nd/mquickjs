@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+*.o
+*.d
+mqjs
+example
+mqjs_stdlib
+example_stdlib
+*_test
+dtoa_test
+libm_test
+rempio2_test
+
+# Generated headers (will be regenerated during build)
+mqjs_stdlib.h
+example_stdlib.h
+mquickjs_atom.h
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Docker
+Dockerfile
+.dockerignore
+.devcontainer

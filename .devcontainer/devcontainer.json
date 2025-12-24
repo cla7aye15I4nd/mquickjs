@@ -1,0 +1,40 @@
+{
+    "name": "MQuickJS Development",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "target": "development"
+    },
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "mounts": [
+        "source=mquickjs-build-cache,target=/workspace/.build,type=volume"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.makefile-tools",
+                "jeff-hykin.better-c-syntax",
+                "twxs.cmake",
+                "Anthropic.claude-code"
+            ],
+            "settings": {
+                "C_Cpp.default.compilerPath": "/usr/bin/clang",
+                "C_Cpp.default.cStandard": "c99",
+                "C_Cpp.default.intelliSenseMode": "linux-clang-x64",
+                "C_Cpp.default.includePath": [
+                    "${workspaceFolder}/**"
+                ],
+                "files.associations": {
+                    "*.h": "c",
+                    "*.c": "c"
+                },
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true,
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    },
+    "postCreateCommand": "make"
+}
