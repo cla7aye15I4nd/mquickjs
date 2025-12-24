@@ -7,7 +7,8 @@
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
     "mounts": [
-        "source=mquickjs-build-cache,target=/workspace/.build,type=volume"
+        "source=mquickjs-build-cache,target=/workspace/.build,type=volume",
+        "source=${localEnv:HOME}/.ssh/id_ed25519,target=/root/.ssh/id_ed25519,readonly,type=bind"
     ],
     "customizations": {
         "vscode": {
