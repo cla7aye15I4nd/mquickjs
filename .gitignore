@@ -27,3 +27,11 @@ rempio2_test
 test_builtin.bin
 mquickjs_build_atoms
 mqjs_example
+
+# Coverage artifacts
+coverage/
+*.profraw
+*.profdata
+
+# Claude AI files
+.claude/

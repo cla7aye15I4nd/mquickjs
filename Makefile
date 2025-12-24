@@ -5,6 +5,7 @@
 #CONFIG_SOFTFLOAT=y
 #CONFIG_ASAN=y
 #CONFIG_GPROF=y
+#CONFIG_COVERAGE=y
 CONFIG_SMALL=y
 
 ifdef CONFIG_ARM32
@@ -50,6 +51,10 @@ endif
 ifdef CONFIG_ASAN
 CFLAGS+=-fsanitize=address -fno-omit-frame-pointer
 LDFLAGS+=-fsanitize=address -fno-omit-frame-pointer
+endif
+ifdef CONFIG_COVERAGE
+CFLAGS+=-fprofile-instr-generate -fcoverage-mapping
+LDFLAGS+=-fprofile-instr-generate -fcoverage-mapping
 endif
 ifdef CONFIG_X86_32
 CFLAGS+=-m32
@@ -142,5 +147,49 @@ rempio2_test: tests/rempio2_test.o libm.o
 
 clean:
 	rm -f *.o *.d *~ tests/*.o tests/*.d tests/*~ test_builtin.bin mqjs_stdlib mqjs_stdlib.h mquickjs_build_atoms mquickjs_atom.h mqjs_example example_stdlib example_stdlib.h $(PROGS) $(TEST_PROGS)
+
+# Coverage targets
+COVERAGE_DIR?=coverage
+LLVM_PROFDATA?=llvm-profdata
+LLVM_COV?=llvm-cov
+
+coverage: clean-coverage
+	@echo "Cleaning previous build..."
+	$(MAKE) clean
+	@echo "Building with coverage instrumentation..."
+	$(MAKE) CONFIG_COVERAGE=y all
+	@echo "Running tests with coverage..."
+	@mkdir -p $(COVERAGE_DIR)
+	LLVM_PROFILE_FILE="$(COVERAGE_DIR)/mqjs-%p.profraw" $(MAKE) test || true
+	@echo "Merging coverage data..."
+	$(LLVM_PROFDATA) merge -sparse $(COVERAGE_DIR)/*.profraw -o $(COVERAGE_DIR)/mqjs.profdata
+	@echo "Generating coverage report..."
+	$(LLVM_COV) report ./mqjs -instr-profile=$(COVERAGE_DIR)/mqjs.profdata
+	@echo ""
+	@echo "Generating detailed HTML coverage report..."
+	$(LLVM_COV) show ./mqjs -instr-profile=$(COVERAGE_DIR)/mqjs.profdata -format=html -output-dir=$(COVERAGE_DIR)/html
+	@echo "Coverage report generated in $(COVERAGE_DIR)/html/index.html"
+	@echo ""
+	@echo "Coverage summary:"
+	$(LLVM_COV) report ./mqjs -instr-profile=$(COVERAGE_DIR)/mqjs.profdata
+
+coverage-report:
+	@if [ ! -f $(COVERAGE_DIR)/mqjs.profdata ]; then \
+		echo "No coverage data found. Run 'make coverage' first."; \
+		exit 1; \
+	fi
+	$(LLVM_COV) report ./mqjs -instr-profile=$(COVERAGE_DIR)/mqjs.profdata
+
+coverage-show:
+	@if [ ! -f $(COVERAGE_DIR)/mqjs.profdata ]; then \
+		echo "No coverage data found. Run 'make coverage' first."; \
+		exit 1; \
+	fi
+	$(LLVM_COV) show ./mqjs -instr-profile=$(COVERAGE_DIR)/mqjs.profdata
+
+clean-coverage:
+	rm -rf $(COVERAGE_DIR)
+
+.PHONY: coverage coverage-report coverage-show clean-coverage
 
 -include $(wildcard *.d)

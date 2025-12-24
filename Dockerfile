@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     llvm \
     make \
     libc6-dev \
+    libclang-rt-18-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -50,7 +51,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     lcov \
     sudo \
+    libclang-rt-18-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Coverage stage - optimized for code coverage analysis
+FROM ubuntu:24.04 AS coverage
+
+# Install coverage-specific tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    clang \
+    llvm \
+    lld \
+    make \
+    libc6-dev \
+    libclang-rt-18-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+# Copy source files
+COPY . .
+
+# Environment variables for coverage
+ENV LLVM_PROFILE_FILE=/workspace/coverage/mqjs-%p.profraw
+ENV PATH="/usr/lib/llvm-18/bin:${PATH}"
+
+# Create coverage output directory
+RUN mkdir -p /workspace/coverage
+
+# Default command runs coverage
+CMD ["make", "coverage"]
 
 WORKDIR /workspace
 

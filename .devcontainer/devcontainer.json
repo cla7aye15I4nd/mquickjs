@@ -18,7 +18,8 @@
                 "ms-vscode.makefile-tools",
                 "jeff-hykin.better-c-syntax",
                 "twxs.cmake",
-                "Anthropic.claude-code"
+                "Anthropic.claude-code",
+                "ritwickdey.LiveServer"
             ],
             "settings": {
                 "C_Cpp.default.compilerPath": "/usr/bin/clang",
